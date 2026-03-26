@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NES Online</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 顶部状态栏 -->
+    <header>
+      <h1>NES Online</h1>
+      <div id="status-bar">
+        <span id="viewer-count">在线: 0</span>
+        <span id="current-player-info">当前玩家: 无</span>
+        <span id="play-time">游玩时间: --</span>
+      </div>
+    </header>
+
+    <main>
+      <!-- 游戏画面 -->
+      <div id="game-container">
+        <canvas id="game-canvas" width="256" height="240"></canvas>
+        <div id="countdown-overlay" class="hidden">
+          <span id="countdown-text"></span>
+        </div>
+        <div id="connection-overlay">
+          <span>正在连接服务器...</span>
+        </div>
+      </div>
+
+      <!-- 信息栏 -->
+      <div id="info-bar">
+        <span id="role-info">角色: 观众</span>
+        <span id="queue-info" class="hidden"></span>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div id="game-actions">
+        <button id="btn-request-play" class="action-button primary">申请游玩</button>
+        <button id="btn-cancel-queue" class="action-button warning hidden">取消排队</button>
+        <button id="btn-release-play" class="action-button danger hidden">结束游玩</button>
+      </div>
+
+      <!-- 触摸控制器 -->
+      <div id="touch-controls">
+        <!-- 方向键 -->
+        <div id="dpad-area">
+          <div id="dpad-container">
+            <button class="dpad-btn" data-btn="4" id="btn-up" aria-label="上">▲</button>
+            <div class="dpad-row">
+              <button class="dpad-btn" data-btn="6" id="btn-left" aria-label="左">◀</button>
+              <div class="dpad-center"></div>
+              <button class="dpad-btn" data-btn="7" id="btn-right" aria-label="右">▶</button>
+            </div>
+            <button class="dpad-btn" data-btn="5" id="btn-down" aria-label="下">▼</button>
+          </div>
+        </div>
+
+        <!-- 系统键 -->
+        <div id="system-area">
+          <button class="sys-btn" data-btn="2" aria-label="Select">SELECT</button>
+          <button class="sys-btn" data-btn="3" aria-label="Start">START</button>
+        </div>
+
+        <!-- AB键 -->
+        <div id="ab-area">
+          <div id="ab-container">
+            <button class="action-btn" data-btn="1" id="btn-b" aria-label="B">B</button>
+            <button class="action-btn" data-btn="0" id="btn-a" aria-label="A">A</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 提示消息 -->
+    <div id="toast" class="hidden"></div>
+  </div>
+
+  <!-- 键盘操作提示 -->
+  <div id="keyboard-hint" class="hidden">
+    <div class="hint-content">
+      <h3>键盘操作</h3>
+      <div class="hint-grid">
+        <span>方向键: ↑↓←→</span>
+        <span>A键: Z</span>
+        <span>B键: X</span>
+        <span>Start: Enter</span>
+        <span>Select: Space</span>
+      </div>
+      <button id="close-hint">知道了</button>
+    </div>
+  </div>
+
+  <script src="/js/renderer.js"></script>
+  <script src="/js/audio-player.js"></script>
+  <script src="/js/input-handler.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>
