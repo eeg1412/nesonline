@@ -59,16 +59,20 @@ try {
 const savedState = snapshotMgr.loadLatest()
 if (savedState) {
   try {
-    engine.loadState(savedState)
-    console.log('Game state restored from snapshot')
+    const ok = engine.loadState(savedState)
+    if (ok) {
+      console.log('Game state restored from snapshot')
+    } else {
+      console.log('Snapshot version mismatch, starting fresh game')
+    }
   } catch (err) {
     console.error(`Failed to restore snapshot: ${err.message}`)
     console.log('Starting fresh game')
   }
 }
 
-// 启动定期快照
-snapshotMgr.start(() => engine.saveState())
+// 启动定期快照（slim=true 剔除 romData 和渲染缓冲区）
+snapshotMgr.start(() => engine.saveState(true))
 
 // ========== WebSocket 连接处理 ==========
 wss.on('connection', (ws, req) => {
@@ -119,7 +123,8 @@ server.listen(PORT, HOST, () => {
 function gracefulShutdown() {
   console.log('\nShutting down...')
   snapshotMgr.stop()
-  snapshotMgr.saveImmediate(() => engine.saveState())
+  // snapshotMgr.saveImmediate(() => engine.saveState(true))
+  snapshotMgr.terminate()
   session.stop()
   wss.close()
   server.close(() => {
