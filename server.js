@@ -72,7 +72,20 @@ if (savedState) {
 }
 
 // 启动定期快照（slim=true 剔除 romData 和渲染缓冲区）
-snapshotMgr.start(() => engine.saveState(true))
+const getStateFn = () => engine.saveState(true)
+
+// 设置游戏会话暂停/恢复回调，控制快照和游戏循环生命周期
+session.onResume = () => {
+  snapshotMgr.start(getStateFn)
+}
+session.onPause = () => {
+  // 暂停前执行一次最终快照，然后停止定期快照
+  snapshotMgr.takeSnapshot(getStateFn)
+  snapshotMgr.stop()
+}
+
+// 游戏循环和快照在第一个客户端连接时自动启动
+console.log('Game engine ready, waiting for clients to start game loop...')
 
 // ========== WebSocket 连接处理 ==========
 wss.on('connection', (ws, req) => {
@@ -99,7 +112,6 @@ wss.on('connection', (ws, req) => {
 })
 
 // ========== 启动 ==========
-session.start()
 
 server.listen(PORT, HOST, () => {
   console.log('========================================')

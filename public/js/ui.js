@@ -19,7 +19,8 @@ class UI {
       connectionOverlay: document.getElementById('connection-overlay'),
       toast: document.getElementById('toast'),
       keyboardHint: document.getElementById('keyboard-hint'),
-      closeHint: document.getElementById('close-hint')
+      closeHint: document.getElementById('close-hint'),
+      touchControls: document.getElementById('touch-controls')
     }
 
     this.currentRole = 'viewer'
@@ -120,6 +121,9 @@ class UI {
     this.toggleElement(this.els.btnRequestPlay, state.role === 'viewer')
     this.toggleElement(this.els.btnCancelQueue, state.role === 'queued')
     this.toggleElement(this.els.btnReleasePlay, state.role === 'player')
+
+    // 虚拟按钮仅对玩家显示
+    this.toggleElement(this.els.touchControls, state.role === 'player')
 
     // 倒计时
     if (
