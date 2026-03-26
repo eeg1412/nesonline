@@ -19,8 +19,10 @@ const COUNTDOWN_SECONDS = parseInt(process.env.COUNTDOWN_SECONDS) || 10
 const MAX_QUEUE_SIZE = parseInt(process.env.MAX_QUEUE_SIZE) || 50
 const AUDIO_SAMPLE_RATE = parseInt(process.env.AUDIO_SAMPLE_RATE) || 44100
 const KEYFRAME_INTERVAL = parseInt(process.env.KEYFRAME_INTERVAL) || 300
-const SNAPSHOT_INTERVAL_SEC = parseInt(process.env.SNAPSHOT_INTERVAL_SECONDS) || 1
-const SNAPSHOT_ARCHIVE_EVERY_N = parseInt(process.env.SNAPSHOT_ARCHIVE_EVERY_N) || 3600
+const SNAPSHOT_INTERVAL_SEC =
+  parseInt(process.env.SNAPSHOT_INTERVAL_SECONDS) || 1
+const SNAPSHOT_ARCHIVE_EVERY_N =
+  parseInt(process.env.SNAPSHOT_ARCHIVE_EVERY_N) || 3600
 const SNAPSHOT_MAX_ARCHIVES = parseInt(process.env.SNAPSHOT_MAX_ARCHIVES) || 72
 const SNAPSHOT_DIR = process.env.SNAPSHOT_DIR || './snapshots'
 
@@ -72,18 +74,22 @@ snapshotMgr.start(() => engine.saveState())
 wss.on('connection', (ws, req) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
   const client = session.addClient(ws)
-  console.log(`[+] ${client.name} connected from ${ip} (total: ${wss.clients.size})`)
+  console.log(
+    `[+] ${client.name} connected from ${ip} (total: ${wss.clients.size})`
+  )
 
   ws.on('message', (data, isBinary) => {
     session.handleMessage(ws, data, isBinary)
   })
 
   ws.on('close', () => {
-    console.log(`[-] ${client.name} disconnected (total: ${wss.clients.size - 1})`)
+    console.log(
+      `[-] ${client.name} disconnected (total: ${wss.clients.size - 1})`
+    )
     session.removeClient(ws)
   })
 
-  ws.on('error', (err) => {
+  ws.on('error', err => {
     console.error(`[!] WebSocket error for ${client.name}: ${err.message}`)
   })
 })
@@ -102,7 +108,9 @@ server.listen(PORT, HOST, () => {
   console.log(`Max queue size:   ${MAX_QUEUE_SIZE}`)
   console.log(`Audio sample rate:${AUDIO_SAMPLE_RATE}Hz`)
   console.log(`Keyframe interval:${KEYFRAME_INTERVAL} frames`)
-  console.log(`Snapshot:         every ${SNAPSHOT_INTERVAL_SEC}s, archive/${SNAPSHOT_ARCHIVE_EVERY_N}, max ${SNAPSHOT_MAX_ARCHIVES}`)
+  console.log(
+    `Snapshot:         every ${SNAPSHOT_INTERVAL_SEC}s, archive/${SNAPSHOT_ARCHIVE_EVERY_N}, max ${SNAPSHOT_MAX_ARCHIVES}`
+  )
   console.log(`Snapshot dir:     ${path.resolve(SNAPSHOT_DIR)}`)
   console.log('========================================')
 })

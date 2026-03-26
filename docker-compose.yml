@@ -16,7 +16,7 @@ services:
     container_name: nesonline
     restart: unless-stopped
     ports:
-      - "${PORT:-3000}:3000"
+      - '${PORT:-3000}:3000'
     environment:
       - NODE_ENV=production
       - PORT=3000
@@ -41,10 +41,10 @@ services:
       resources:
         limits:
           memory: 256M
-          cpus: "1.0"
+          cpus: '1.0'
         reservations:
           memory: 64M
-          cpus: "0.25"
+          cpus: '0.25'
     # 安全加固
     security_opt:
       - no-new-privileges:true
@@ -56,10 +56,10 @@ services:
     logging:
       driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: '10m'
+        max-file: '3'
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:3000/']
       interval: 30s
       timeout: 5s
       retries: 3

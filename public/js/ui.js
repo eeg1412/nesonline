@@ -74,8 +74,10 @@ class UI {
 
     // 当前玩家
     if (state.currentPlayer) {
-      this.els.currentPlayer.textContent = '当前玩家: ' + state.currentPlayer.name
-      this.els.playTime.textContent = '游玩时间: ' + this.formatTime(state.currentPlayer.playTime)
+      this.els.currentPlayer.textContent =
+        '当前玩家: ' + state.currentPlayer.name
+      this.els.playTime.textContent =
+        '游玩时间: ' + this.formatTime(state.currentPlayer.playTime)
       this.els.playTime.classList.remove('hidden')
 
       // 更新本地计时基准
@@ -95,11 +97,17 @@ class UI {
       player: '玩家',
       queued: '排队中'
     }
-    this.els.roleInfo.textContent = '角色: ' + (roleLabels[state.role] || state.role)
+    this.els.roleInfo.textContent =
+      '角色: ' + (roleLabels[state.role] || state.role)
 
     // 排队信息
     if (state.role === 'queued' && state.queuePosition) {
-      this.els.queueInfo.textContent = '排队位置: 第' + state.queuePosition + '位 (共' + state.queueLength + '人)'
+      this.els.queueInfo.textContent =
+        '排队位置: 第' +
+        state.queuePosition +
+        '位 (共' +
+        state.queueLength +
+        '人)'
       this.els.queueInfo.classList.remove('hidden')
     } else if (state.queueLength > 0) {
       this.els.queueInfo.textContent = '排队人数: ' + state.queueLength
@@ -114,7 +122,11 @@ class UI {
     this.toggleElement(this.els.btnReleasePlay, state.role === 'player')
 
     // 倒计时
-    if (state.countdown !== null && state.countdown !== undefined && state.countdown > 0) {
+    if (
+      state.countdown !== null &&
+      state.countdown !== undefined &&
+      state.countdown > 0
+    ) {
       this.els.countdownOverlay.classList.remove('hidden')
       this.els.countdownText.textContent = state.countdown + 's'
     } else {

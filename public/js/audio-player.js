@@ -17,7 +17,7 @@ class AudioPlayer {
     this.nextPlayTime = 0
     this.started = false
     this.initialized = false
-    this.muted = true  // 默认静音，用户主动开启
+    this.muted = true // 默认静音，用户主动开启
   }
 
   /**
@@ -66,7 +66,7 @@ class AudioPlayer {
    * @param {Int16Array} pcmInt16Samples 单声道 int16 采样数组
    */
   scheduleSamples(pcmInt16Samples) {
-    if (this.muted) return  // 静音：服务端不应发音频，这里作为安全兜底
+    if (this.muted) return // 静音：服务端不应发音频，这里作为安全兜底
     if (!this.audioCtx || !this.gainNode) return
     if (pcmInt16Samples.length === 0) return
 
@@ -80,7 +80,11 @@ class AudioPlayer {
     }
 
     // 创建音频缓冲
-    var audioBuffer = this.audioCtx.createBuffer(1, sampleCount, this.sampleRate)
+    var audioBuffer = this.audioCtx.createBuffer(
+      1,
+      sampleCount,
+      this.sampleRate
+    )
     audioBuffer.copyToChannel(float32, 0)
 
     var source = this.audioCtx.createBufferSource()

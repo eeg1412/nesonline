@@ -52,20 +52,20 @@ npm start
 
 ## 环境变量说明
 
-| 变量 | 默认值 | 说明 |
-|---|---|---|
-| `PORT` | `3000` | HTTP/WS 监听端口 |
-| `HOST` | `0.0.0.0` | 监听地址 |
-| `ROM_PATH` | `./roms/game.nes` | NES ROM 文件路径 |
-| `MAX_PLAY_TIME_SECONDS` | `300` | 单次最长游玩时间（秒） |
-| `COUNTDOWN_SECONDS` | `10` | 超时后倒计时提醒秒数 |
-| `MAX_QUEUE_SIZE` | `50` | 排队上限人数 |
-| `AUDIO_SAMPLE_RATE` | `44100` | 音频采样率 (Hz) |
-| `KEYFRAME_INTERVAL` | `300` | 每隔多少帧发送完整关键帧（用于新连接恢复） |
-| `SNAPSHOT_INTERVAL_SECONDS` | `1` | 快照保存间隔（秒） |
-| `SNAPSHOT_ARCHIVE_EVERY_N` | `3600` | 每多少次快照留一份留档 |
-| `SNAPSHOT_MAX_ARCHIVES` | `72` | 最大留档快照数量 |
-| `SNAPSHOT_DIR` | `./snapshots` | 快照存储目录 |
+| 变量                        | 默认值            | 说明                                       |
+| --------------------------- | ----------------- | ------------------------------------------ |
+| `PORT`                      | `3000`            | HTTP/WS 监听端口                           |
+| `HOST`                      | `0.0.0.0`         | 监听地址                                   |
+| `ROM_PATH`                  | `./roms/game.nes` | NES ROM 文件路径                           |
+| `MAX_PLAY_TIME_SECONDS`     | `300`             | 单次最长游玩时间（秒）                     |
+| `COUNTDOWN_SECONDS`         | `10`              | 超时后倒计时提醒秒数                       |
+| `MAX_QUEUE_SIZE`            | `50`              | 排队上限人数                               |
+| `AUDIO_SAMPLE_RATE`         | `44100`           | 音频采样率 (Hz)                            |
+| `KEYFRAME_INTERVAL`         | `300`             | 每隔多少帧发送完整关键帧（用于新连接恢复） |
+| `SNAPSHOT_INTERVAL_SECONDS` | `1`               | 快照保存间隔（秒）                         |
+| `SNAPSHOT_ARCHIVE_EVERY_N`  | `3600`            | 每多少次快照留一份留档                     |
+| `SNAPSHOT_MAX_ARCHIVES`     | `72`              | 最大留档快照数量                           |
+| `SNAPSHOT_DIR`              | `./snapshots`     | 快照存储目录                               |
 
 ---
 

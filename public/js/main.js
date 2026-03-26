@@ -16,7 +16,7 @@
   var ws = null
   var reconnectTimer = null
   var connected = false
-  var audioEnabled = false  // 默认关闭，用户手动开启
+  var audioEnabled = false // 默认关闭，用户手动开启
 
   // ========== WebSocket 连接 ==========
 
@@ -79,14 +79,16 @@
     if (buffer.byteLength < 8) return
 
     // 帧头 (8 bytes)
-    var packetType = view.getUint8(offset); offset += 1
+    var packetType = view.getUint8(offset)
+    offset += 1
     if (packetType !== 0x01) return
 
     // var frameSeq = view.getUint32(offset, true)
     offset += 4
     // var flags = view.getUint8(offset)
     offset += 1
-    var paletteSize = view.getUint16(offset, true); offset += 2
+    var paletteSize = view.getUint16(offset, true)
+    offset += 2
 
     // 调色盘
     if (paletteSize > 0) {
@@ -99,12 +101,14 @@
 
     // 瓦片数量
     if (offset + 2 > buffer.byteLength) return
-    var tileCount = view.getUint16(offset, true); offset += 2
+    var tileCount = view.getUint16(offset, true)
+    offset += 2
 
     // 瓦片差量
     for (var i = 0; i < tileCount; i++) {
       if (offset + 66 > buffer.byteLength) break
-      var pos = view.getUint16(offset, true); offset += 2
+      var pos = view.getUint16(offset, true)
+      offset += 2
       var tileData = new Uint8Array(buffer, offset, 64)
       renderer.applyTileDelta(pos, tileData)
       offset += 64
@@ -114,7 +118,8 @@
 
     // 音频
     if (offset + 2 > buffer.byteLength) return
-    var sampleCount = view.getUint16(offset, true); offset += 2
+    var sampleCount = view.getUint16(offset, true)
+    offset += 2
 
     if (sampleCount > 0 && offset + sampleCount * 2 <= buffer.byteLength) {
       var pcmData = new Int16Array(buffer, offset, sampleCount)
@@ -183,19 +188,25 @@
 
   // ========== UI 按钮事件 ==========
 
-  document.getElementById('btn-request-play').addEventListener('click', function () {
-    audioPlayer.init()
-    audioPlayer.resume()
-    sendJSON({ type: 'request_play' })
-  })
+  document
+    .getElementById('btn-request-play')
+    .addEventListener('click', function () {
+      audioPlayer.init()
+      audioPlayer.resume()
+      sendJSON({ type: 'request_play' })
+    })
 
-  document.getElementById('btn-cancel-queue').addEventListener('click', function () {
-    sendJSON({ type: 'cancel_queue' })
-  })
+  document
+    .getElementById('btn-cancel-queue')
+    .addEventListener('click', function () {
+      sendJSON({ type: 'cancel_queue' })
+    })
 
-  document.getElementById('btn-release-play').addEventListener('click', function () {
-    sendJSON({ type: 'release_play' })
-  })
+  document
+    .getElementById('btn-release-play')
+    .addEventListener('click', function () {
+      sendJSON({ type: 'release_play' })
+    })
 
   // ========== 音效切换 ==========
 
@@ -212,15 +223,17 @@
     }
   }
 
-  document.getElementById('btn-toggle-sound').addEventListener('click', function () {
-    audioEnabled = !audioEnabled
-    audioPlayer.init()
-    audioPlayer.resume()
-    audioPlayer.setMuted(!audioEnabled)
-    sendJSON({ type: 'set_audio', enabled: audioEnabled })
-    updateSoundButtonUI()
-    ui.showToast(audioEnabled ? '音效已开启' : '音效已关闭', 1500)
-  })
+  document
+    .getElementById('btn-toggle-sound')
+    .addEventListener('click', function () {
+      audioEnabled = !audioEnabled
+      audioPlayer.init()
+      audioPlayer.resume()
+      audioPlayer.setMuted(!audioEnabled)
+      sendJSON({ type: 'set_audio', enabled: audioEnabled })
+      updateSoundButtonUI()
+      ui.showToast(audioEnabled ? '音效已开启' : '音效已关闭', 1500)
+    })
 
   // ========== 音频激活（浏览器策略要求用户交互后才能播放音频）==========
 

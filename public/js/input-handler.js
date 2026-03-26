@@ -10,20 +10,20 @@ class InputHandler {
 
     // 键盘映射 (code → NES button index)
     this.keyMap = {
-      'ArrowUp': 4,
-      'ArrowDown': 5,
-      'ArrowLeft': 6,
-      'ArrowRight': 7,
-      'KeyZ': 0,        // A
-      'KeyX': 1,        // B
-      'Space': 2,       // Select
-      'Enter': 3,       // Start
-      'KeyA': 0,        // A (WASD 备选)
-      'KeyS': 1,        // B (WASD 备选)
-      'KeyW': 4,        // Up (WASD 备选)
-      'KeyD': 7,        // Right (WASD 备选)
-      'ShiftRight': 2,  // Select 备选
-      'Backspace': 2    // Select 备选
+      ArrowUp: 4,
+      ArrowDown: 5,
+      ArrowLeft: 6,
+      ArrowRight: 7,
+      KeyZ: 0, // A
+      KeyX: 1, // B
+      Space: 2, // Select
+      Enter: 3, // Start
+      KeyA: 0, // A (WASD 备选)
+      KeyS: 1, // B (WASD 备选)
+      KeyW: 4, // Up (WASD 备选)
+      KeyD: 7, // Right (WASD 备选)
+      ShiftRight: 2, // Select 备选
+      Backspace: 2 // Select 备选
     }
 
     this.setupKeyboard()
@@ -38,7 +38,8 @@ class InputHandler {
 
     document.addEventListener('keydown', function (e) {
       // 避免在输入框中拦截按键
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')
+        return
 
       var button = self.keyMap[e.code]
       if (button !== undefined && !self.activeKeys.has(e.code)) {
@@ -109,9 +110,13 @@ class InputHandler {
     // 在控制区域内阻止默认触摸行为（防止页面滚动）
     var touchControls = document.getElementById('touch-controls')
     if (touchControls) {
-      touchControls.addEventListener('touchmove', function (e) {
-        e.preventDefault()
-      }, { passive: false })
+      touchControls.addEventListener(
+        'touchmove',
+        function (e) {
+          e.preventDefault()
+        },
+        { passive: false }
+      )
     }
   }
 }
