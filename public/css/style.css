@@ -155,6 +155,29 @@ main {
   font-weight: 600;
 }
 
+/* 音效切换按钮 */
+.sound-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  cursor: pointer;
+  padding: 2px 7px;
+  line-height: 1;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.sound-btn:active {
+  background: var(--bg-tertiary);
+}
+
+.sound-btn.sound-on {
+  color: var(--success);
+  border-color: var(--success);
+}
+
 /* ========== Game Actions ========== */
 #game-actions {
   display: flex;

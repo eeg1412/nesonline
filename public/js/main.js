@@ -16,6 +16,7 @@
   var ws = null
   var reconnectTimer = null
   var connected = false
+  var audioEnabled = false  // 默认关闭，用户手动开启
 
   // ========== WebSocket 连接 ==========
 
@@ -28,6 +29,11 @@
       connected = true
       ui.hideConnecting()
       ui.showToast('已连接到服务器')
+
+      // 重连后恢复音频偏好（服务端默认为关闭，开启时需重新告知）
+      if (audioEnabled) {
+        sendJSON({ type: 'set_audio', enabled: true })
+      }
 
       if (reconnectTimer) {
         clearTimeout(reconnectTimer)
@@ -189,6 +195,31 @@
 
   document.getElementById('btn-release-play').addEventListener('click', function () {
     sendJSON({ type: 'release_play' })
+  })
+
+  // ========== 音效切换 ==========
+
+  function updateSoundButtonUI() {
+    var btn = document.getElementById('btn-toggle-sound')
+    if (!btn) return
+    btn.textContent = audioEnabled ? '🔊' : '🔇'
+    btn.title = audioEnabled ? '关闭音效' : '开启音效'
+    btn.setAttribute('aria-label', audioEnabled ? '关闭音效' : '开启音效')
+    if (audioEnabled) {
+      btn.classList.add('sound-on')
+    } else {
+      btn.classList.remove('sound-on')
+    }
+  }
+
+  document.getElementById('btn-toggle-sound').addEventListener('click', function () {
+    audioEnabled = !audioEnabled
+    audioPlayer.init()
+    audioPlayer.resume()
+    audioPlayer.setMuted(!audioEnabled)
+    sendJSON({ type: 'set_audio', enabled: audioEnabled })
+    updateSoundButtonUI()
+    ui.showToast(audioEnabled ? '音效已开启' : '音效已关闭', 1500)
   })
 
   // ========== 音频激活（浏览器策略要求用户交互后才能播放音频）==========

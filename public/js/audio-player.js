@@ -17,6 +17,7 @@ class AudioPlayer {
     this.nextPlayTime = 0
     this.started = false
     this.initialized = false
+    this.muted = true  // 默认静音，用户主动开启
   }
 
   /**
@@ -48,10 +49,24 @@ class AudioPlayer {
   }
 
   /**
+   * 设置静音状态
+   * @param {boolean} value true=静音，false=播放
+   */
+  setMuted(value) {
+    this.muted = !!value
+    if (this.muted) {
+      // 静音时重置时间轴，下次开启时重新建立缓冲
+      this.started = false
+      this.nextPlayTime = 0
+    }
+  }
+
+  /**
    * 调度一帧的 PCM 音频采样
    * @param {Int16Array} pcmInt16Samples 单声道 int16 采样数组
    */
   scheduleSamples(pcmInt16Samples) {
+    if (this.muted) return  // 静音：服务端不应发音频，这里作为安全兜底
     if (!this.audioCtx || !this.gainNode) return
     if (pcmInt16Samples.length === 0) return
 
