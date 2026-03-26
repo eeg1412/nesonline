@@ -1,0 +1,66 @@
+# NES Online - Production Docker Compose
+# Usage:
+#   1. Place your .nes ROM in ./data/roms/game.nes
+#   2. cp .env.example .env && edit .env
+#   3. docker compose up -d
+
+services:
+  nesonline:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nesonline
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      - ROM_PATH=/data/roms/game.nes
+      - MAX_PLAY_TIME_SECONDS=${MAX_PLAY_TIME_SECONDS:-300}
+      - COUNTDOWN_SECONDS=${COUNTDOWN_SECONDS:-10}
+      - MAX_QUEUE_SIZE=${MAX_QUEUE_SIZE:-50}
+      - AUDIO_SAMPLE_RATE=${AUDIO_SAMPLE_RATE:-44100}
+      - KEYFRAME_INTERVAL=${KEYFRAME_INTERVAL:-300}
+      - SNAPSHOT_INTERVAL_SECONDS=${SNAPSHOT_INTERVAL_SECONDS:-1}
+      - SNAPSHOT_ARCHIVE_EVERY_N=${SNAPSHOT_ARCHIVE_EVERY_N:-3600}
+      - SNAPSHOT_MAX_ARCHIVES=${SNAPSHOT_MAX_ARCHIVES:-72}
+      - SNAPSHOT_DIR=/data/snapshots
+    volumes:
+      # ROM 文件挂载（只读）
+      - ./data/roms:/data/roms:ro
+      # 快照持久化（容器重建不丢失）
+      - nesonline-snapshots:/data/snapshots
+    # 内存限制：NES 模拟低开销，256MB 足够
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "1.0"
+        reservations:
+          memory: 64M
+          cpus: "0.25"
+    # 安全加固
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=10M
+    # 优雅关闭：等待快照保存
+    stop_grace_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  nesonline-snapshots:
+    driver: local

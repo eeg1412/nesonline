@@ -1,0 +1,11 @@
+.git/
+node_modules/
+.env
+*.log
+log/
+snapshots/
+data/
+README.md
+LICENSE
+.gitignore
+.dockerignore

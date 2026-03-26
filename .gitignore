@@ -4,6 +4,7 @@ roms/*.nes
 roms/*.zip
 *.log
 log/
+snapshots/
 .DS_Store
 Thumbs.db
 
