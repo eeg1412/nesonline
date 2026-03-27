@@ -25,9 +25,11 @@ const SNAPSHOT_ARCHIVE_EVERY_N =
   parseInt(process.env.SNAPSHOT_ARCHIVE_EVERY_N) || 3600
 const SNAPSHOT_MAX_ARCHIVES = parseInt(process.env.SNAPSHOT_MAX_ARCHIVES) || 72
 const SNAPSHOT_DIR = process.env.SNAPSHOT_DIR || './snapshots'
+const RESET_PASSWORD = process.env.RESET_PASSWORD || ''
 
 // ========== 初始化 ==========
 const app = express()
+app.use(express.json())
 app.use(express.static(path.join(__dirname, 'public')))
 
 const server = http.createServer(app)
@@ -86,6 +88,36 @@ session.onPause = () => {
 
 // 游戏循环和快照在第一个客户端连接时自动启动
 console.log('Game engine ready, waiting for clients to start game loop...')
+
+// ========== HTTP API ==========
+app.post('/api/reset', (req, res) => {
+  const password = req.body && req.body.password
+  if (!RESET_PASSWORD || password !== RESET_PASSWORD) {
+    return res.status(403).json({ success: false, error: '密码错误' })
+  }
+
+  try {
+    // 停止快照
+    snapshotMgr.stop()
+
+    // 重置游戏会话（引擎、编码器、队列）
+    session.reset()
+
+    // 重新加载 ROM
+    engine.loadROM(ROM_PATH)
+    console.log('Game reset: ROM reloaded')
+
+    // 如果有客户端连接，重启快照
+    if (session.clients.size > 0) {
+      snapshotMgr.start(getStateFn)
+    }
+
+    res.json({ success: true, message: '游戏已重启' })
+  } catch (err) {
+    console.error('Reset failed:', err.message)
+    res.status(500).json({ success: false, error: '重启失败: ' + err.message })
+  }
+})
 
 // ========== WebSocket 连接处理 ==========
 wss.on('connection', (ws, req) => {

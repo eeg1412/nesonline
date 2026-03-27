@@ -12,6 +12,7 @@
 - **全平台兼容**：响应式布局，支持键盘和触摸屏操作
 - **实时快照**：定时快照保存游戏进度，重启后自动恢复，留档快照用于灾难恢复
 - **Docker 部署**：生产级 Dockerfile + docker-compose，快照 volume 持久化
+- **管理员重置**：支持设置密码通过 Web 界面远程重置游戏状态，所有观众实时看到重置画面
 
 ## 快速开始
 
@@ -66,6 +67,7 @@ npm start
 | `SNAPSHOT_ARCHIVE_EVERY_N`  | `3600`            | 每多少次快照留一份留档                     |
 | `SNAPSHOT_MAX_ARCHIVES`     | `72`              | 最大留档快照数量                           |
 | `SNAPSHOT_DIR`              | `./snapshots`     | 快照存储目录                               |
+| `RESET_PASSWORD`            | （空）            | 重置游戏密码（为空时禁用重置功能）         |
 
 ---
 
@@ -118,6 +120,42 @@ npm start
 - **启动恢复**：服务启动时自动加载最新快照，加载失败则尝试从留档恢复
 - **无卡顿**：`toJSON()` 同步获取状态（< 1ms），写盘异步执行，原子重命名防损坏
 - **优雅关闭**：收到 SIGINT/SIGTERM 时同步保存最后一次快照
+
+## 管理员重置功能
+
+### 访问重置页面
+
+访问 `http://localhost:3000/reset.html`，输入密码后点击「重置游戏 (Reset)」。
+
+### 密码设置
+
+在 `.env` 文件中配置 `RESET_PASSWORD`：
+
+```env
+RESET_PASSWORD=your-secure-password
+```
+
+### 密码校验规则
+
+- **未配置密码**（空或未设置）：所有重置请求返回 `403 密码错误`，**拒绝重置**
+- **密码正确**：游戏立即重置到初始状态，**所有观众实时看到完整关键帧**
+- **密码错误**：返回错误提示，不执行重置
+
+### API 接口
+
+```bash
+POST /api/reset
+Content-Type: application/json
+
+请求:
+  { "password": "your-secure-password" }
+
+响应 (密码正确):
+  { "ok": true }
+
+响应 (密码错误或未配置):
+  { "ok": false, "error": "密码错误" }
+```
 
 ---
 

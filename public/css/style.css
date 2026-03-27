@@ -404,6 +404,7 @@ main {
   padding: 24px;
   text-align: center;
   border: 1px solid var(--border-color);
+  min-width: 320px;
 }
 
 .hint-content h3 {

@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>NES Online - 管理重启</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg-primary: #0d0d1a;
+        --bg-secondary: #151528;
+        --bg-card: #1a1a30;
+        --text-primary: #e8e8f0;
+        --text-secondary: #9898b0;
+        --accent: #e94560;
+        --accent-hover: #ff6b81;
+        --success: #00b894;
+        --danger: #e74c3c;
+        --border-color: #2a2a45;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+          'Microsoft YaHei', Roboto, sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 32px;
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      .card h1 {
+        font-size: 20px;
+        color: var(--accent);
+        margin-bottom: 8px;
+        letter-spacing: 2px;
+      }
+
+      .card p {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-bottom: 24px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+        text-align: left;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      .form-group input:focus {
+        border-color: var(--accent);
+      }
+
+      .btn-reset {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: var(--danger);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          transform 0.1s;
+      }
+
+      .btn-reset:hover {
+        background: #c0392b;
+      }
+
+      .btn-reset:active {
+        transform: scale(0.97);
+      }
+
+      .btn-reset:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .message {
+        margin-top: 16px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        display: none;
+      }
+
+      .message.success {
+        display: block;
+        background: rgba(0, 184, 148, 0.15);
+        color: var(--success);
+        border: 1px solid rgba(0, 184, 148, 0.3);
+      }
+
+      .message.error {
+        display: block;
+        background: rgba(231, 76, 60, 0.15);
+        color: var(--danger);
+        border: 1px solid rgba(231, 76, 60, 0.3);
+      }
+
+      .back-link {
+        margin-top: 20px;
+        font-size: 13px;
+      }
+
+      .back-link a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .back-link a:hover {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>NES Online</h1>
+        <p>管理员重启控制台</p>
+
+        <div class="form-group">
+          <label for="password">重启密码</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="请输入重启密码"
+            autocomplete="off"
+          />
+        </div>
+
+        <button class="btn-reset" id="btn-reset">重启游戏</button>
+
+        <div class="message" id="message"></div>
+
+        <div class="back-link">
+          <a href="/">← 返回游戏</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      ;(function () {
+        'use strict'
+
+        var btnReset = document.getElementById('btn-reset')
+        var passwordInput = document.getElementById('password')
+        var messageEl = document.getElementById('message')
+
+        function showMessage(text, type) {
+          messageEl.textContent = text
+          messageEl.className = 'message ' + type
+          messageEl.style.display = ''
+        }
+
+        function hideMessage() {
+          messageEl.className = 'message'
+          messageEl.style.display = 'none'
+        }
+
+        function doReset() {
+          var password = passwordInput.value
+          if (!password) {
+            showMessage('请输入重启密码', 'error')
+            return
+          }
+
+          btnReset.disabled = true
+          btnReset.textContent = '重启中...'
+          hideMessage()
+
+          var xhr = new XMLHttpRequest()
+          xhr.open('POST', '/api/reset')
+          xhr.setRequestHeader('Content-Type', 'application/json')
+          xhr.onload = function () {
+            btnReset.disabled = false
+            btnReset.textContent = '重启游戏'
+            try {
+              var res = JSON.parse(xhr.responseText)
+              if (res.success) {
+                showMessage('游戏已成功重启！', 'success')
+                passwordInput.value = ''
+              } else {
+                showMessage(res.error || '重启失败', 'error')
+              }
+            } catch (e) {
+              showMessage('请求失败', 'error')
+            }
+          }
+          xhr.onerror = function () {
+            btnReset.disabled = false
+            btnReset.textContent = '重启游戏'
+            showMessage('网络错误，请重试', 'error')
+          }
+          xhr.send(JSON.stringify({ password: password }))
+        }
+
+        btnReset.addEventListener('click', doReset)
+
+        passwordInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            doReset()
+          }
+        })
+      })()
+    </script>
+  </body>
+</html>
