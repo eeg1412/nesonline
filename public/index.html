@@ -37,6 +37,15 @@
         <div id="info-bar">
           <span id="role-info">角色: 观众</span>
           <span id="queue-info" class="hidden"></span>
+          <div id="fps-controls">
+            <span id="fps-current">当前帧率: 原始帧率</span>
+            <select id="fps-mode" aria-label="画面帧率模式">
+              <option value="auto">自动</option>
+              <option value="60">原始帧率</option>
+              <option value="30">30帧率</option>
+              <option value="15">15帧率</option>
+            </select>
+          </div>
           <button
             id="btn-toggle-sound"
             class="sound-btn"

@@ -11,6 +11,8 @@ class UI {
       playTime: document.getElementById('play-time'),
       roleInfo: document.getElementById('role-info'),
       queueInfo: document.getElementById('queue-info'),
+      fpsCurrent: document.getElementById('fps-current'),
+      fpsMode: document.getElementById('fps-mode'),
       btnRequestPlay: document.getElementById('btn-request-play'),
       btnCancelQueue: document.getElementById('btn-cancel-queue'),
       btnReleasePlay: document.getElementById('btn-release-play'),
@@ -100,6 +102,20 @@ class UI {
     }
     this.els.roleInfo.textContent =
       '角色: ' + (roleLabels[state.role] || state.role)
+
+    // 帧率显示（原始帧率=60fps）
+    var tierLabel = {
+      60: '原始帧率',
+      30: '30帧率',
+      15: '15帧率'
+    }
+    if (this.els.fpsCurrent) {
+      this.els.fpsCurrent.textContent =
+        '当前帧率: ' + (tierLabel[state.fpsTier] || '原始帧率')
+    }
+    if (this.els.fpsMode && state.fpsPreference !== undefined) {
+      this.els.fpsMode.value = String(state.fpsPreference)
+    }
 
     // 排队信息
     if (state.role === 'queued' && state.queuePosition) {

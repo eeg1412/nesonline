@@ -17,6 +17,19 @@
   var reconnectTimer = null
   var connected = false
   var audioEnabled = false // 默认关闭，用户手动开启
+  var fpsPreference = loadFPSPreference()
+
+  function loadFPSPreference() {
+    var v = localStorage.getItem('fpsPreference')
+    if (v === '60' || v === '30' || v === '15' || v === 'auto') {
+      return v
+    }
+    return 'auto'
+  }
+
+  function saveFPSPreference(v) {
+    localStorage.setItem('fpsPreference', v)
+  }
 
   // ========== WebSocket 连接 ==========
 
@@ -34,6 +47,12 @@
       if (audioEnabled) {
         sendJSON({ type: 'set_audio', enabled: true })
       }
+
+      // 恢复帧率偏好
+      sendJSON({
+        type: 'set_fps',
+        fps: fpsPreference === 'auto' ? 'auto' : parseInt(fpsPreference, 10)
+      })
 
       if (reconnectTimer) {
         clearTimeout(reconnectTimer)
@@ -138,6 +157,12 @@
           ui.updateState(msg)
           break
 
+        case 'ping':
+          if (typeof msg.t === 'number') {
+            sendJSON({ type: 'pong', t: msg.t })
+          }
+          break
+
         case 'request_play_result':
           if (msg.success) {
             if (msg.role === 'player') {
@@ -234,6 +259,20 @@
       updateSoundButtonUI()
       ui.showToast(audioEnabled ? '音效已开启' : '音效已关闭', 1500)
     })
+
+  // ========== 帧率模式切换 ==========
+  var fpsModeEl = document.getElementById('fps-mode')
+  if (fpsModeEl) {
+    fpsModeEl.value = fpsPreference
+    fpsModeEl.addEventListener('change', function () {
+      fpsPreference = fpsModeEl.value
+      saveFPSPreference(fpsPreference)
+      sendJSON({
+        type: 'set_fps',
+        fps: fpsPreference === 'auto' ? 'auto' : parseInt(fpsPreference, 10)
+      })
+    })
+  }
 
   // ========== 音频激活（浏览器策略要求用户交互后才能播放音频）==========
 
